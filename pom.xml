@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>wnavey</groupId>
+    <artifactId>YouTubeJukeBox</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <scm>
+        <connection>scm:git:git@github.com:twitter/hbc.git</connection>
+        <url>scm:git:git@github.com:twitter/hbc.git</url>
+        <developerConnection>scm:git:git@github.com:twitter/hbc.git</developerConnection>
+    </scm>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Steven Liu</name>
+            <email>steven@twitter.com</email>
+        </developer>
+        <developer>
+            <name>Kevin Oliver</name>
+            <email>koliver@twitter.com</email>
+        </developer>
+    </developers>
+
+    <!--<properties>-->
+        <!--&lt;!&ndash;<project.youtube.version>v3-rev8-1.12.0-beta</project.youtube.version>&ndash;&gt;-->
+        <!--<project.youtube.version>v3-rev114-1.19.0</project.youtube.version>-->
+        <!--<project.http.version>1.12.0-beta</project.http.version>-->
+        <!--<project.oauth.version>1.19.0-beta</project.oauth.version>-->
+        <!--<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
+    <!--</properties>-->
+
+    <!--<repositories>-->
+        <!--<repository>-->
+            <!--<id>google-api-services</id>-->
+            <!--<url>http://google-api-client-libraries.appspot.com/mavenrepo</url>-->
+        <!--</repository>-->
+    <!--</repositories>-->
+    <properties>
+        <project.youtube.version>v3-rev107-1.18.0-rc</project.youtube.version>
+        <project.youtube.analytics.version>v1-rev24-1.17.0-rc</project.youtube.analytics.version>
+        <project.http.version>1.18.0-rc</project.http.version>
+        <project.oauth.version>1.18.0-rc</project.oauth.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype OSS</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>google-api-services</id>
+            <url>http://google-api-client-libraries.appspot.com/mavenrepo</url>
+        </repository>
+
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+
+    <!--<dependencies>-->
+
+        <!--&lt;!&ndash; YouTube Data V3 support &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>com.google.apis</groupId>-->
+            <!--<artifactId>google-api-services-youtube</artifactId>-->
+            <!--<version>${project.youtube.version}</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>com.google.http-client</groupId>-->
+            <!--<artifactId>google-http-client-jackson2</artifactId>-->
+            <!--<version>${project.http.version}</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>com.google.oauth-client</groupId>-->
+            <!--<artifactId>google-oauth-client-jetty</artifactId>-->
+            <!--<version>${project.oauth.version}</version>-->
+        <!--</dependency>-->
+    <!--</dependencies>-->
+
+    <dependencies>
+
+        <!-- Twitter sdk -->
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>hbc-core</artifactId> <!-- or hbc-twitter4j -->
+            <version>2.2.0</version> <!-- or whatever the latest version is -->
+        </dependency>
+
+        <!-- YouTube Data V3 support -->
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-youtube</artifactId>
+            <version>${project.youtube.version}</version>
+        </dependency>
+
+        <!-- Joda time -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.3</version>
+        </dependency>
+
+        <!-- Required for any code that makes calls to the Google Analytics API -->
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-youtubeAnalytics</artifactId>
+            <version>${project.youtube.analytics.version}</version>
+        </dependency>
+
+        <!-- This dependency is only used for the Topics API sample, which requires the Jackson JSON parser -->
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-jackson2</artifactId>
+            <version>${project.http.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client-jetty</artifactId>
+            <version>${project.oauth.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.collections</groupId>
+            <artifactId>google-collections</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+    </dependencies>
+
+</project>
