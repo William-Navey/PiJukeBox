@@ -78,6 +78,7 @@ public class TwitterFilterStream {
 
                 if(tweetTextContainsYouTubeURL(tweetText)){
                     System.out.println("A YOUTUBE LINK WAS TWEETED!");
+                    System.out.println("tweet text: " + tweetText);
                     String youtubeUrl = extractYouTubeUrlFromTweetExpandedUrl(tweetJson);
                     String videoId = extractVideoIdFromYouTubeURL(youtubeUrl);
                     int videoDuration = youTubeProxy.requestVideoDuration(videoId);
@@ -116,8 +117,24 @@ public class TwitterFilterStream {
      * @param youtubeUrl
      * @return String value of youtube videoId
      */
+    // mobile tweets don't have "watch?v=". example mobile youtube link: http://youtu.be/ViwtNLUqkMY
     static String extractVideoIdFromYouTubeURL(String youtubeUrl){
-        return youtubeUrl.split("watch\\?v=")[1];
+        try{
+            //TODO: add "ifLinkIsMobile" method or something
+            if(youtubeUrl.contains("watch")){
+                return youtubeUrl.split("watch\\?v=")[1];
+            }
+            else if (youtubeUrl.contains("youtu.be")){
+                return youtubeUrl.split("youtu.be\\/")[1];
+            }
+            else{
+                throw new RuntimeException("Encountered youtube link format not yet accounted for: " + youtubeUrl);
+            }
+        }
+        catch(RuntimeException e){
+            System.err.println("Error extracting videoId from youtubeUrl: " + youtubeUrl);
+            throw e;
+        }
     }
 
     static boolean tweetTextContainsYouTubeURL(String msg){
