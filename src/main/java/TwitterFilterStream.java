@@ -22,7 +22,6 @@ import com.twitter.hbc.httpclient.auth.OAuth1;
 import youtube.YouTubeProxy;
 import youtube.YouTubeVideo;
 
-import java.util.PriorityQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -30,6 +29,9 @@ import java.awt.Desktop;
 import java.net.URI;
 import java.util.concurrent.PriorityBlockingQueue;
 
+/**
+ * Twitter Client class to establish a connection to twitter,
+ */
 public class TwitterFilterStream {
 
     private final YouTubeProxy youTubeProxy;
