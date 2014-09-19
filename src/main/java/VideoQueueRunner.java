@@ -1,8 +1,7 @@
 import youtube.YouTubeVideo;
 
-import java.awt.*;
+import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.concurrent.PriorityBlockingQueue;
 
 /**
@@ -11,11 +10,25 @@ import java.util.concurrent.PriorityBlockingQueue;
  */
 public class VideoQueueRunner extends Thread {
 
-    private static final int VIDEO_BUFFER_MILIS = 3000;
+    private final int videoBufferMillis;
     private final PriorityBlockingQueue<YouTubeVideo> priorityBlockingQueue;
+    private final String pathToBrowser;
 
     public VideoQueueRunner(PriorityBlockingQueue<YouTubeVideo> priorityQueue){
+        this(priorityQueue, "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe ");
+    }
+
+    public VideoQueueRunner(PriorityBlockingQueue<YouTubeVideo> priorityQueue, String pathToBrowser){
+        this(priorityQueue, pathToBrowser, 3000);
+    }
+
+    public VideoQueueRunner(PriorityBlockingQueue<YouTubeVideo> priorityQueue, String pathToBrowser, int videoBufferMillis){
+        if(!(new File(pathToBrowser).exists())){
+            throw new RuntimeException("Launching VideoQueueRunner thread failed. Invalid path to web browser: " + pathToBrowser);
+        }
         this.priorityBlockingQueue = priorityQueue;
+        this.pathToBrowser = pathToBrowser;
+        this.videoBufferMillis = videoBufferMillis;
     }
 
     public void run(){
@@ -23,7 +36,7 @@ public class VideoQueueRunner extends Thread {
             try{
                 YouTubeVideo currentVideo = priorityBlockingQueue.take();
                 Process videoProcess = launchFirefoxBrowser(currentVideo.getYoutubeLink());
-                Thread.sleep(currentVideo.getMilisecDuration() + VIDEO_BUFFER_MILIS );
+                Thread.sleep(currentVideo.getMilisecDuration() + videoBufferMillis);
                 videoProcess.destroy();
             } catch (InterruptedException ex){
                 System.err.println("VideoQueueRunner thread was interrupted: " + ex.getMessage());
@@ -33,32 +46,13 @@ public class VideoQueueRunner extends Thread {
         }
     }
 
-    static Process launchFirefoxBrowser(String url) throws IOException{
+    private Process launchFirefoxBrowser(String url) throws IOException{
         // method inspired from
         //http://www.programcreek.com/2009/05/using-java-open-ie-and-close-ie/
         try {
-            //TODO: add File.exists check on firefox executable before attempting to launch, throw exception if not exist
-            return Runtime.getRuntime().exec("C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe " + url);
+            return Runtime.getRuntime().exec(pathToBrowser + url);
         } catch (IOException e) {
             throw new IOException("Error launching IE browser: " + e.getMessage(), e);
         }
-    }
-
-
-    static void launchWebBrowser(String uristring)
-    {
-        try{
-            if(Desktop.isDesktopSupported())
-            {
-                System.out.println("Launching link in browser...");
-                Desktop.getDesktop().browse(new URI(uristring));
-            }
-            else{
-                System.err.println("Failed to launch " + uristring);
-            }
-        } catch (Exception ex){
-            System.err.println(ex.getStackTrace());
-        }
-
     }
 }
