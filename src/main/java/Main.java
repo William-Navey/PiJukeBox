@@ -2,9 +2,7 @@
  * @author: wnavey
  */
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import youtube.YouTubeProxy;
