@@ -44,19 +44,4 @@ public class Main {
             t.printStackTrace();
         }
     }
-
-    static void testWebBrowser(String uristring){
-        try{
-            if(Desktop.isDesktopSupported())
-            {
-                System.out.println("Launching link in browser...");
-                Desktop.getDesktop().browse(new URI(uristring));
-            }
-            else{
-                System.err.println("Failed to launch " + uristring);
-            }
-        } catch (Exception ex){
-            System.err.println(ex.getStackTrace());
-        }
-    }
 }
