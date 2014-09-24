@@ -19,6 +19,7 @@ import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
 import com.twitter.hbc.core.processor.StringDelimitedProcessor;
 import com.twitter.hbc.httpclient.auth.Authentication;
 import com.twitter.hbc.httpclient.auth.OAuth1;
+import twitter.TwitterParser;
 import youtube.YouTubeProxy;
 import youtube.YouTubeVideo;
 
@@ -74,11 +75,14 @@ public class TwitterFilterStream {
                 String tweetText = TwitterParser.extractTweetText(tweetJson);
 
                 if(TwitterParser.tweetTextContainsYouTubeURL(tweetText)){
-                    System.out.println("Youtube tweet.\ntweet text: " + tweetText);
+                    System.out.println("Youtube tweet." +
+                            "\ntweet json: " + tweetJson +
+                            "\ntweet text: " + tweetText);
                     String youtubeUrl = TwitterParser.extractYouTubeUrlFromTweetExpandedUrl(tweetJson);
                     String videoId = TwitterParser.extractVideoIdFromYouTubeURL(youtubeUrl);
                     int videoDuration = youTubeProxy.requestVideoDuration(videoId);
-                    videoPriorityBlockingQueue.add(new YouTubeVideo(videoId, videoDuration, youtubeUrl));
+                    String screenName = TwitterParser.extractScreenNameFromTweetJson(tweetJson);
+                    videoPriorityBlockingQueue.add(new YouTubeVideo(videoId, videoDuration, youtubeUrl, screenName));
                     System.out.println("Added video to priorityQueue");
                 }
                 else{

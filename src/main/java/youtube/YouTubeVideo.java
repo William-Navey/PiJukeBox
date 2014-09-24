@@ -1,5 +1,7 @@
 package youtube;
 
+import twitter.TwitterHistory;
+
 /**
  * @author: wnavey
  */
@@ -11,17 +13,29 @@ public class YouTubeVideo implements Comparable<YouTubeVideo> {
     private final int milisecDuration;
     private final String youtubeLink;
 
-    public YouTubeVideo(String videoId, int milisecDuration, String youtubeLink){
-        this.priority = calculatePriority(videoId);
+    public YouTubeVideo(String videoId, int milisecDuration, String youtubeLink, String screenNameOfTweeter){
+        this.priority = calculatePriority(videoId, screenNameOfTweeter);
         this.milisecDuration = milisecDuration;
         this.youtubeLink = youtubeLink;
     }
 
-    public static int calculatePriority(String videoId){
+    public static int calculatePriority(String videoId, String screenName){
         int priority = 0;
-        //TODO: impl
-        // Has the user tweeted before? +1
-        // Has the same song been tweeted before? +1
+        if(TwitterHistory.usersLogged.contains(screenName)){
+            System.out.println("User has tweeted before, decreasing priority.");
+            priority++;
+        }
+        else{
+            TwitterHistory.usersLogged.add(screenName);
+        }
+
+        if(TwitterHistory.songsLogged.contains(videoId)){
+            System.out.println("Song has been tweeted before, decreasing priority.");
+            priority++;
+        }
+        else{
+            TwitterHistory.songsLogged.add(videoId);
+        }
         return priority;
     }
 

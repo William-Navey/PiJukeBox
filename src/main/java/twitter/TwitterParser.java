@@ -1,3 +1,5 @@
+package twitter;
+
 /**
  * @author: wnavey
  */
@@ -10,7 +12,7 @@ public class TwitterParser {
      * @return String value of youtube videoId
      */
     // mobile tweets don't have "watch?v=". example mobile youtube link: http://youtu.be/ViwtNLUqkMY
-    static String extractVideoIdFromYouTubeURL(String youtubeUrl){
+    public static String extractVideoIdFromYouTubeURL(String youtubeUrl){
         try{
             //TODO: add "ifLinkIsMobile" method or something
             if(youtubeUrl.contains("watch")){
@@ -29,12 +31,18 @@ public class TwitterParser {
         }
     }
 
+    public static String extractScreenNameFromTweetJson(String tweetJson){
+        String[] tweetSplitOnScreenName = tweetJson.split("\"screen_name\"");
+        String screenName = tweetSplitOnScreenName[1].split("\"")[1];
+        return screenName;
+    }
+
     /**
      *
      * @param msg representing the entire tweet captured by the TwitterFilterStream
      * @return String value of Youtube link
      */
-    static String extractYouTubeUrlFromTweetExpandedUrl(String msg){
+    public static String extractYouTubeUrlFromTweetExpandedUrl(String msg){
         String[] msgSplitOnExpandedUrl = msg.split("\"expanded_url\"");
         String youtubeLink = msgSplitOnExpandedUrl[1].split("\"")[1];
         youtubeLink = youtubeLink.trim();
@@ -43,17 +51,17 @@ public class TwitterParser {
         return youtubeLink;
     }
 
-    static boolean tweetTextContainsYouTubeURL(String msg){
+    public static boolean tweetTextContainsYouTubeURL(String msg){
         return msg.contains("t.co");
     }
 
-    static String extractTweetText(String msg){
+    public static String extractTweetText(String msg){
         String[] msgSplitOnText = msg.split("\"text\"");
         String tweetText = msgSplitOnText[1].split("\"")[1];
         return tweetText;
     }
 
-    static String extractYouTubeLinkFromTweetText(String tweetText){
+    public static String extractYouTubeLinkFromTweetText(String tweetText){
         String youtubeLink = tweetText.replaceAll("@RaspberryBBox", "");
         youtubeLink = youtubeLink.trim();
         // Remove backslashes
