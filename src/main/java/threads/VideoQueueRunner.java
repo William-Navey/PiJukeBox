@@ -1,3 +1,5 @@
+package threads;
+
 import youtube.YouTubeVideo;
 
 import java.io.File;
@@ -15,6 +17,7 @@ public class VideoQueueRunner extends Thread {
     private final String pathToBrowser;
 
     public VideoQueueRunner(PriorityBlockingQueue<YouTubeVideo> priorityQueue){
+        //TODO: dynamically determine firefox default path based on OS
         this(priorityQueue, "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe ");
     }
 
@@ -52,7 +55,7 @@ public class VideoQueueRunner extends Thread {
         try {
             return Runtime.getRuntime().exec(pathToBrowser + url);
         } catch (IOException e) {
-            throw new IOException("Error launching IE browser: " + e.getMessage(), e);
+            throw new IOException("Error launching Firefox browser: " + e.getMessage(), e);
         }
     }
 }

@@ -44,11 +44,12 @@ public class GoogleAuthorizer {
      *
      * @param scopes              list of scopes needed to run youtube upload.
      * @param credentialDatastore name of the credential datastore to cache OAuth tokens
+     * @param clientSecretsFile   relative path of the json file containing the client secrets
      */
-    public static Credential authorize(List<String> scopes, String credentialDatastore) throws IOException {
+    public static Credential authorize(List<String> scopes, String credentialDatastore, String clientSecretsFile) throws IOException {
 
         // Load client secrets.
-        Reader clientSecretReader = new InputStreamReader(GoogleAuthorizer.class.getResourceAsStream("/client_secrets.json"));
+        Reader clientSecretReader = new InputStreamReader(GoogleAuthorizer.class.getResourceAsStream(clientSecretsFile));
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, clientSecretReader);
 
         // Checks that the defaults have been replaced (Default = "Enter X here").
@@ -56,7 +57,7 @@ public class GoogleAuthorizer {
                 || clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
             System.out.println(
                     "Enter Client ID and Secret from https://code.google.com/apis/console/?api=youtube"
-                            + "into src/main/resources/client_secrets.json");
+                            + "into src/main/resources/google_client_secrets.json");
             System.exit(1);
         }
 

@@ -1,4 +1,4 @@
-/**
+package twitter; /**
  * Copyright 2013 Twitter, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,14 @@ import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
 import com.twitter.hbc.core.processor.StringDelimitedProcessor;
 import com.twitter.hbc.httpclient.auth.Authentication;
 import com.twitter.hbc.httpclient.auth.OAuth1;
-import twitter.TwitterParser;
+import org.codehaus.jackson.map.ObjectMapper;
+import threads.VideoQueueRunner;
 import youtube.YouTubeProxy;
 import youtube.YouTubeVideo;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -34,21 +38,43 @@ import java.util.concurrent.PriorityBlockingQueue;
 public class TwitterFilterStream {
 
     private final YouTubeProxy youTubeProxy;
+    private final Authentication auth;
 
-    public TwitterFilterStream(YouTubeProxy youTubeProxy){
+    public TwitterFilterStream(YouTubeProxy youTubeProxy, String twitterOauthFile) throws IOException{
         this.youTubeProxy = youTubeProxy;
+        try{
+            this.auth = authenticate(twitterOauthFile);
+        } catch (IOException ex){
+            throw new IOException("Problem authenticating twitter from file: " + twitterOauthFile, ex);
+        }
     }
 
-    public void run(String twitterHandle, String consumerKey, String consumerSecret,
-                           String token, String secret) throws InterruptedException {
+    private Authentication authenticate(String twitterOauthFile) throws IOException{
+        ObjectMapper mapper = new ObjectMapper();
+        Reader twitterOauthSecretsReader =
+                new InputStreamReader(TwitterFilterStream.class.getResourceAsStream(twitterOauthFile));
+        TwitterOauthSecrets twitterOauthSecrets = mapper.readValue(twitterOauthSecretsReader, TwitterOauthSecrets.class);
+
+        return new OAuth1(
+                twitterOauthSecrets.getConsumer_key(),
+                twitterOauthSecrets.getConsumer_secret(),
+                twitterOauthSecrets.getAccess_token(),
+                twitterOauthSecrets.getAccess_token_secret());
+
+    }
+
+    /**
+     * Listens for tweets received by the specified screen name.
+     * If a tweet received is a youtube video, that video is added to the video queue
+     * @param twitterScreenName
+     * @throws InterruptedException
+     * @throws IOException
+     */
+    public void run(String twitterScreenName) throws InterruptedException, IOException {
         BlockingQueue<String> tweetStreamBlockingQueue = new LinkedBlockingQueue<String>(10000);
         StatusesFilterEndpoint endpoint = new StatusesFilterEndpoint();
         // add some track terms
-        endpoint.trackTerms(Lists.newArrayList(twitterHandle));
-
-        Authentication auth = new OAuth1(consumerKey, consumerSecret,
-                token, secret);
-        // Authentication auth = new BasicAuth(username, password);
+        endpoint.trackTerms(Lists.newArrayList(twitterScreenName));
 
         // Create a new BasicClient. By default gzip is enabled.
         Client client = new ClientBuilder()
@@ -65,7 +91,6 @@ public class TwitterFilterStream {
         PriorityBlockingQueue<YouTubeVideo> videoPriorityBlockingQueue = new PriorityBlockingQueue<YouTubeVideo>();
         new VideoQueueRunner(videoPriorityBlockingQueue).start();
 
-        //TODO: improve exception handling
         int exitStatus = 0;
         try{
             while (true) {
@@ -89,10 +114,9 @@ public class TwitterFilterStream {
                     System.out.println("Tweet received, but did not contain youtube url:\n" + tweetText);
                 }
             }
-
-        } catch (Exception ex){
-            System.err.println("Error occurred in TwitterFilterStream run loop: " + ex.getMessage());
+        } catch (IOException ex){
             exitStatus = 1;
+            throw new IOException("Error occurred during TwitterFilterStream run loop: " + ex.getMessage(), ex);
         }
         finally {
             client.stop();

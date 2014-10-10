@@ -21,12 +21,12 @@ public class YouTubeProxy {
     // Global instance of YouTube object to make all API requests.
     private static YouTube youtube;
 
-    public YouTubeProxy() throws IOException{
+    public YouTubeProxy(String clientSecretsFile) throws IOException{
 
         // General read/write scope for YouTube APIs.
         List<String> scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube");
         // Authorization.
-        Credential credential = GoogleAuthorizer.authorize(scopes, "myVideoDuration");
+        Credential credential = GoogleAuthorizer.authorize(scopes, "myVideoDuration", clientSecretsFile);
 
         // YouTube object used to make all API requests.
         youtube = new YouTube.Builder(GoogleAuthorizer.HTTP_TRANSPORT, GoogleAuthorizer.JSON_FACTORY, credential)
@@ -34,22 +34,30 @@ public class YouTubeProxy {
                 .build();
     }
 
-    public int requestVideoDuration(String videoId) throws Exception {
+    public int requestVideoDuration(String videoId) throws IOException{
 
-        YouTube.Videos.List videoListRequest = youtube.videos().list("contentDetails");
-        videoListRequest.setId(videoId);
-        videoListRequest.setFields("items/contentDetails");
+        try {
 
-        VideoListResponse videoListResponse = videoListRequest.execute();
-        List<Video> videoList = videoListResponse.getItems();
 
-        //TODO: improve
-        Video video = videoList.get(0);
-        String strDuration = video.getContentDetails().getDuration();
+            YouTube.Videos.List videoListRequest = youtube.videos().list("contentDetails");
+            videoListRequest.setId(videoId);
+            videoListRequest.setFields("items/contentDetails");
 
-        PeriodFormatter periodFormatter = ISOPeriodFormat.standard();
-        Period period = periodFormatter.parsePeriod(strDuration);
+            VideoListResponse videoListResponse = videoListRequest.execute();
+            List<Video> videoList = videoListResponse.getItems();
 
-        return period.toStandardSeconds().getSeconds() * 1000;
+            //TODO: improve
+            Video video = videoList.get(0);
+            String strDuration = video.getContentDetails().getDuration();
+
+            PeriodFormatter periodFormatter = ISOPeriodFormat.standard();
+            Period period = periodFormatter.parsePeriod(strDuration);
+
+            return period.toStandardSeconds().getSeconds() * 1000;
+
+        } catch (IOException ex){
+            throw new IOException("Error requesting video duration: " + ex.getMessage(), ex);
+        }
+
     }
 }
