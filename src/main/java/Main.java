@@ -4,6 +4,8 @@
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import twitter.TwitterFilterStream;
 import youtube.YouTubeProxy;
@@ -16,6 +18,9 @@ import youtube.YouTubeProxy;
 
 public class Main {
 
+
+    static final Logger logger = LogManager.getLogger(Main.class.getName());
+
     public static void main( String[] args ) {
 
         try {
@@ -23,9 +28,11 @@ public class Main {
             YouTubeProxy youTubeProxy = new YouTubeProxy("/google_client_secrets.json");
             TwitterFilterStream twitterFilterStream = new TwitterFilterStream(youTubeProxy, "/twitter_oath_credentials.json");
 
+            logger.info("Listening for tweets at " + twitterScreenName);
             twitterFilterStream.run(twitterScreenName);
 
-        } catch (GoogleJsonResponseException e) {
+        }
+        catch (GoogleJsonResponseException e) {
             System.err.println("There was a service error: " + e.getDetails().getCode() + " : " + e.getDetails().getMessage());
             e.printStackTrace();
         } catch (IOException e) {

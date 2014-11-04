@@ -27,6 +27,9 @@ import youtube.YouTubeVideo;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -36,6 +39,9 @@ import java.util.concurrent.PriorityBlockingQueue;
  * Twitter Client class to establish a connection to twitter,
  */
 public class TwitterFilterStream {
+
+    public static Set<String> usersLogged = Collections.synchronizedSet(new HashSet<String>());
+    public static Set<String> songsLogged = Collections.synchronizedSet(new HashSet<String>());
 
     private final YouTubeProxy youTubeProxy;
     private final Authentication auth;
@@ -92,8 +98,9 @@ public class TwitterFilterStream {
         new VideoQueueRunner(videoPriorityBlockingQueue).start();
 
         int exitStatus = 0;
-        try{
-            while (true) {
+
+        while (true) {
+            try {
                 //  Retrieves and removes the head of this queue, waiting if necessary
                 //   until an element becomes available.
                 String tweetJson = tweetStreamBlockingQueue.take();
@@ -114,13 +121,19 @@ public class TwitterFilterStream {
                     System.out.println("Tweet received, but did not contain youtube url:\n" + tweetText);
                 }
             }
-        } catch (IOException ex){
-            exitStatus = 1;
-            throw new IOException("Error occurred during TwitterFilterStream run loop: " + ex.getMessage(), ex);
-        }
-        finally {
-            client.stop();
-            System.exit(exitStatus);
+            catch (TwitterParserException ex){
+                // Log parsing tweet failed, resuming loop
+                System.err.println("Parsing tweet failed, resuming listening loop");
+                // Don't break or throw exception, resume loop to listen for next tweet
+            }
+            catch (IOException ex){
+                exitStatus = 1;
+                throw new IOException("Error occurred during TwitterFilterStream run loop: " + ex.getMessage(), ex);
+            }
+            finally {
+                client.stop();
+                System.exit(exitStatus);
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 package youtube;
 
-import twitter.TwitterHistory;
+import twitter.TwitterFilterStream;
 
 /**
  * @author: wnavey
@@ -21,20 +21,20 @@ public class YouTubeVideo implements Comparable<YouTubeVideo> {
 
     public static int calculatePriority(String videoId, String screenName){
         int priority = 0;
-        if(TwitterHistory.usersLogged.contains(screenName)){
+        if(TwitterFilterStream.usersLogged.contains(screenName)){
             System.out.println("User has tweeted before, decreasing priority.");
             priority++;
         }
         else{
-            TwitterHistory.usersLogged.add(screenName);
+            TwitterFilterStream.usersLogged.add(screenName);
         }
 
-        if(TwitterHistory.songsLogged.contains(videoId)){
+        if(TwitterFilterStream.songsLogged.contains(videoId)){
             System.out.println("Song has been tweeted before, decreasing priority.");
             priority++;
         }
         else{
-            TwitterHistory.songsLogged.add(videoId);
+            TwitterFilterStream.songsLogged.add(videoId);
         }
         return priority;
     }
