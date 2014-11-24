@@ -19,14 +19,15 @@ import youtube.YouTubeProxy;
 public class Main {
 
 
-    static final Logger logger = LogManager.getLogger(Main.class.getName());
+    public static final Logger logger = LogManager.getLogger(Main.class.getName());
 
-    public static void main( String[] args ) {
+    public static void main( String[] args ) throws Exception {
 
         try {
             String twitterScreenName = "@RaspberryBBox";
             YouTubeProxy youTubeProxy = new YouTubeProxy("/google_client_secrets.json");
-            TwitterFilterStream twitterFilterStream = new TwitterFilterStream(youTubeProxy, "/twitter_oath_credentials.json");
+            TwitterFilterStream twitterFilterStream =
+                    new TwitterFilterStream(youTubeProxy, "/twitter_oath_credentials.json", logger);
 
             logger.info("Listening for tweets at " + twitterScreenName);
             twitterFilterStream.run(twitterScreenName);

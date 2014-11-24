@@ -11,12 +11,16 @@
         <File name="MyFile" fileName="${log-path}/app.log">
             <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </File>
+        <File name="TweetLogger" fileName="${log-path}/tweetlogger.log">
+            <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
     </appenders>
 
     <loggers>
         <root level="debug">
             <appender-ref ref="Console" level="info"/>
             <appender-ref ref="MyFile" level="all"/>
+            <appender-ref ref="TweetLogger" level="debug"/>
         </root>
     </loggers>
 </configuration>

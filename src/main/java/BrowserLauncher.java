@@ -81,11 +81,14 @@ public class BrowserLauncher {
 
     static Process launchIEBrowser(String url) throws Exception{
         //http://www.programcreek.com/2009/05/using-java-open-ie-and-close-ie/
+        while(true){
             try {
-                return Runtime.getRuntime().exec("C:\\Program Files\\Internet Explorer\\iexplore.exe " + url);
-            } catch (Exception e) {
-                throw e;
-            }
+                Process p = Runtime.getRuntime().exec("C:\\Test\\iexplore.exe \"http://www.google.com\"");
+                Thread.sleep(5000);
+                p.destroy();
+                System.out.println("Return value was " + p.waitFor());
+            } catch (Exception e) {}
+        }
     }
 
         static void launchChromeBrowser(){
@@ -99,4 +102,6 @@ public class BrowserLauncher {
             } catch (Exception e) {}
         }
     }
+
+//    static void launchAThing
 }

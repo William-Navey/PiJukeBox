@@ -19,6 +19,7 @@ import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
 import com.twitter.hbc.core.processor.StringDelimitedProcessor;
 import com.twitter.hbc.httpclient.auth.Authentication;
 import com.twitter.hbc.httpclient.auth.OAuth1;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import threads.VideoQueueRunner;
 import youtube.YouTubeProxy;
@@ -45,9 +46,11 @@ public class TwitterFilterStream {
 
     private final YouTubeProxy youTubeProxy;
     private final Authentication auth;
+    private final Logger logger;
 
-    public TwitterFilterStream(YouTubeProxy youTubeProxy, String twitterOauthFile) throws IOException{
+    public TwitterFilterStream(YouTubeProxy youTubeProxy, String twitterOauthFile, Logger logger) throws IOException{
         this.youTubeProxy = youTubeProxy;
+        this.logger = logger;
         try{
             this.auth = authenticate(twitterOauthFile);
         } catch (IOException ex){
@@ -91,6 +94,7 @@ public class TwitterFilterStream {
                 .build();
 
         // Establish a connection
+        logger.info("Establishing connection...");
         client.connect();
 
         // Init VideoQueueRunner, launch in separate thread
@@ -99,41 +103,43 @@ public class TwitterFilterStream {
 
         int exitStatus = 0;
 
-        while (true) {
-            try {
-                //  Retrieves and removes the head of this queue, waiting if necessary
-                //   until an element becomes available.
-                String tweetJson = tweetStreamBlockingQueue.take();
-                String tweetText = TwitterParser.extractTweetText(tweetJson);
+        logger.info("Begin listening loop.");
+        try {
+            while (true) {
+                try {
+                    //  Retrieves and removes the head of this queue, waiting if necessary
+                    //   until an element becomes available.
+                    String tweetJson = tweetStreamBlockingQueue.take();
+                    String tweetText = TwitterParser.extractTweetText(tweetJson);
 
-                if(TwitterParser.tweetTextContainsYouTubeURL(tweetText)){
-                    System.out.println("Youtube tweet." +
-                            "\ntweet json: " + tweetJson +
-                            "\ntweet text: " + tweetText);
-                    String youtubeUrl = TwitterParser.extractYouTubeUrlFromTweetExpandedUrl(tweetJson);
-                    String videoId = TwitterParser.extractVideoIdFromYouTubeURL(youtubeUrl);
-                    int videoDuration = youTubeProxy.requestVideoDuration(videoId);
-                    String screenName = TwitterParser.extractScreenNameFromTweetJson(tweetJson);
-                    videoPriorityBlockingQueue.add(new YouTubeVideo(videoId, videoDuration, youtubeUrl, screenName));
-                    System.out.println("Added video to priorityQueue");
+                    if(TwitterParser.tweetTextContainsYouTubeURL(tweetText)){
+                        logger.info("Youtube tweet received.");
+                        logger.debug(
+                                "\ntweet json: " + tweetJson +
+                                "\ntweet text: " + tweetText);
+                        String youtubeUrl = TwitterParser.extractYouTubeUrlFromTweetExpandedUrl(tweetJson);
+                        String videoId = TwitterParser.extractVideoIdFromYouTubeURL(youtubeUrl);
+                        int videoDuration = youTubeProxy.requestVideoDuration(videoId);
+                        String screenName = TwitterParser.extractScreenNameFromTweetJson(tweetJson);
+                        videoPriorityBlockingQueue.add(new YouTubeVideo(videoId, videoDuration, youtubeUrl, screenName));
+                        logger.info("Added video to priorityQueue");
+                    }
+                    else{
+                        logger.info("Tweet received, but did not contain youtube url:\n" + tweetText);
+                    }
                 }
-                else{
-                    System.out.println("Tweet received, but did not contain youtube url:\n" + tweetText);
+                catch (TwitterParserException ex){
+                    logger.error("Parsing tweet failed, resuming listening loop.");
+                    // Don't break or throw exception, resume loop to listen for next tweet
+                }
+                catch (IOException ex){
+                    exitStatus = 1;
+                    throw new IOException("Error occurred during TwitterFilterStream run loop: " + ex.getMessage(), ex);
                 }
             }
-            catch (TwitterParserException ex){
-                // Log parsing tweet failed, resuming loop
-                System.err.println("Parsing tweet failed, resuming listening loop");
-                // Don't break or throw exception, resume loop to listen for next tweet
-            }
-            catch (IOException ex){
-                exitStatus = 1;
-                throw new IOException("Error occurred during TwitterFilterStream run loop: " + ex.getMessage(), ex);
-            }
-            finally {
-                client.stop();
-                System.exit(exitStatus);
-            }
+        } finally {
+            client.stop();
+            System.exit(exitStatus);
         }
     }
 }

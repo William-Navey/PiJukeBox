@@ -21,19 +21,17 @@ public class YouTubeVideo implements Comparable<YouTubeVideo> {
 
     public static int calculatePriority(String videoId, String screenName){
         int priority = 0;
-        if(TwitterFilterStream.usersLogged.contains(screenName)){
+        if (TwitterFilterStream.usersLogged.contains(screenName)) {
             System.out.println("User has tweeted before, decreasing priority.");
             priority++;
-        }
-        else{
+        } else {
             TwitterFilterStream.usersLogged.add(screenName);
         }
 
-        if(TwitterFilterStream.songsLogged.contains(videoId)){
+        if (TwitterFilterStream.songsLogged.contains(videoId)) {
             System.out.println("Song has been tweeted before, decreasing priority.");
             priority++;
-        }
-        else{
+        } else {
             TwitterFilterStream.songsLogged.add(videoId);
         }
         return priority;
@@ -41,13 +39,11 @@ public class YouTubeVideo implements Comparable<YouTubeVideo> {
 
     public int compareTo(YouTubeVideo o){
         // if THIS object is "less than" the specified object (o), return a negative integer
-        if(this.priority < o.getPriority()){
+        if (this.priority < o.getPriority()) {
             return -1;
-        }
-        else if (this.priority == o.getPriority()){
+        } else if (this.priority == o.getPriority()){
             return 0;
-        }
-        else{
+        } else {
             return 1;
         }
     }
