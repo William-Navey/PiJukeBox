@@ -2,6 +2,8 @@ package youtube;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.GeoPoint;
+import com.google.api.services.youtube.model.Thumbnail;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import com.google.common.collect.Lists;
@@ -10,6 +12,7 @@ import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodFormatter;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -59,5 +62,56 @@ public class YouTubeProxy {
             throw new IOException("Error requesting video duration: " + ex.getMessage(), ex);
         }
 
+    }
+
+    public void requestAndPrintVideoInfo(String videoId) throws IOException {
+        try {
+
+
+            YouTube.Videos.List videoListRequest = youtube.videos().list("snippet, recordingDetails").setId(videoId);
+
+            VideoListResponse videoListResponse = videoListRequest.execute();
+            List<Video> videoList = videoListResponse.getItems();
+
+            if (videoList !=null) {
+                prettyPrint(videoList.iterator());
+            }
+        } catch (IOException ex){
+            throw new IOException("Error requesting video duration: " + ex.getMessage(), ex);
+        }
+    }
+
+
+    // modified method taken from https://developers.google.com/youtube/v3/docs/videos/list
+    /**
+     * Prints out all results in the Iterator. For each result, print the
+     * title, video ID, location, and thumbnail.
+     *
+     * @param iteratorVideoResults Iterator of Videos to print
+     *
+     * @param query Search query (String)
+     */
+    private static void prettyPrint(Iterator<Video> iteratorVideoResults) {
+
+        System.out.println("\n=============================================================");
+        System.out.println(
+                "   Tweeted Video details ");
+        System.out.println("=============================================================\n");
+
+        if (!iteratorVideoResults.hasNext()) {
+            System.out.println(" There aren't any results for your query.");
+        }
+
+        while (iteratorVideoResults.hasNext()) {
+
+            Video singleVideo = iteratorVideoResults.next();
+
+            Thumbnail thumbnail = singleVideo.getSnippet().getThumbnails().getDefault();
+
+            System.out.println(" Video Id" + singleVideo.getId());
+            System.out.println(" Title: " + singleVideo.getSnippet().getTitle());
+            System.out.println(" Thumbnail: " + thumbnail.getUrl());
+            System.out.println("\n-------------------------------------------------------------\n");
+        }
     }
 }

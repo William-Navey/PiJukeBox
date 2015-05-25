@@ -19,6 +19,8 @@
         </license>
     </licenses>
     <developers>
+        <!-- Though William Navey did not directly collaborate with Steven Liu & Kevin Oliver, their TwitterFilterStream
+          source code was leveraged for this project. -->
         <developer>
             <name>Steven Liu</name>
             <email>steven@twitter.com</email>
@@ -26,6 +28,10 @@
         <developer>
             <name>Kevin Oliver</name>
             <email>koliver@twitter.com</email>
+        </developer>
+        <developer>
+            <name>William Navey</name>
+            <email>william.navey@gmail.com</email>
         </developer>
     </developers>
 

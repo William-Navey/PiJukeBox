@@ -120,6 +120,7 @@ public class TwitterFilterStream {
                         String youtubeUrl = TwitterParser.extractYouTubeUrlFromTweetExpandedUrl(tweetJson);
                         String videoId = TwitterParser.extractVideoIdFromYouTubeURL(youtubeUrl);
                         int videoDuration = youTubeProxy.requestVideoDuration(videoId);
+                        youTubeProxy.requestAndPrintVideoInfo(videoId);
                         String screenName = TwitterParser.extractScreenNameFromTweetJson(tweetJson);
                         videoPriorityBlockingQueue.add(new YouTubeVideo(videoId, videoDuration, youtubeUrl, screenName));
                         logger.info("Added video to priorityQueue");
