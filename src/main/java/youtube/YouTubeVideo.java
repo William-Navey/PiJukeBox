@@ -1,5 +1,7 @@
 package youtube;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import twitter.TwitterFilterStream;
 
 /**
@@ -13,6 +15,8 @@ public class YouTubeVideo implements Comparable<YouTubeVideo> {
     private final int milisecDuration;
     private final String youtubeLink;
 
+    public static final Logger logger = LogManager.getLogger(YouTubeVideo.class.getClass().getName());
+
     public YouTubeVideo(String videoId, int milisecDuration, String youtubeLink, String screenNameOfTweeter){
         this.priority = calculatePriority(videoId, screenNameOfTweeter);
         this.milisecDuration = milisecDuration;
@@ -22,14 +26,14 @@ public class YouTubeVideo implements Comparable<YouTubeVideo> {
     public static int calculatePriority(String videoId, String screenName){
         int priority = 0;
         if (TwitterFilterStream.usersLogged.contains(screenName)) {
-            System.out.println("User has tweeted before, decreasing priority.");
+            logger.info("User has tweeted before, decreasing priority.");
             priority++;
         } else {
             TwitterFilterStream.usersLogged.add(screenName);
         }
 
         if (TwitterFilterStream.songsLogged.contains(videoId)) {
-            System.out.println("Song has been tweeted before, decreasing priority.");
+            logger.info("Song has been tweeted before, decreasing priority.");
             priority++;
         } else {
             TwitterFilterStream.songsLogged.add(videoId);
