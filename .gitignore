@@ -1,0 +1,6 @@
+#ignore everything but src dir and it's sub dirs & files, pom.xml, and this file.
+/*
+/*/
+!/src/
+!pom.xml
+!.gitignore
