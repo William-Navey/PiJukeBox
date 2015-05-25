@@ -1,6 +1,7 @@
-#ignore everything but src dir and it's sub dirs & files, pom.xml, and this file.
+#ignore everything but src dir and it's sub dirs & files, pom.xml, README.txt, and this file.
 /*
 /*/
 !/src/
 !pom.xml
 !.gitignore
+!README.txt

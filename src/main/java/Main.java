@@ -1,5 +1,5 @@
 /**
- * @author: wnavey
+ * @author: William Navey
  */
 
 import java.io.IOException;
@@ -10,11 +10,7 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import twitter.TwitterFilterStream;
 import youtube.YouTubeProxy;
 
-// PRE-REQS for running this software!
-// Install Firefox
-// install add-block firefox plugin
-// install adobe flash firefox plugin (some youtube videos require flash
-// in Firefox, type "about:config" in url bar, filter with "resume", and change browser.sessionstore.resume_from_crash to false
+// PRE-REQS for running this software are in the README.txt. Read it!
 
 public class Main {
 
