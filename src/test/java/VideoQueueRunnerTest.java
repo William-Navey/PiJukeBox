@@ -3,7 +3,7 @@ import org.junit.*;
 import org.apache.commons.lang3.SystemUtils.*;
 
 /**
- * @author: wnavey
+ * @author: William Navey
  */
 public class VideoQueueRunnerTest {
 

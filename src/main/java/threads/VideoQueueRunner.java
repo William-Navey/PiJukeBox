@@ -10,7 +10,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * Thread launched to handle playing the videos.
- * @author: wnavey
+ * @author: William Navey
  */
 public class VideoQueueRunner extends Thread {
 

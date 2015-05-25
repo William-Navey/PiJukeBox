@@ -7,7 +7,7 @@ import java.net.URI;
 /**
  * A class I've used to test launching browsers. Most likely will be removed from "production" code.
  *
- * @author: wnavey
+ * @author: William Navey
  */
 public class BrowserLauncher {
 

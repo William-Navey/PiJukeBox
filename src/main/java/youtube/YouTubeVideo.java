@@ -3,7 +3,7 @@ package youtube;
 import twitter.TwitterFilterStream;
 
 /**
- * @author: wnavey
+ * @author: William Navey
  */
 public class YouTubeVideo implements Comparable<YouTubeVideo> {
 

@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.io.FileNotFoundException;
 
 /**
- * @author: wnavey
+ * @author: William Navey
  */
 public class FirefoxFacadeTest {
 

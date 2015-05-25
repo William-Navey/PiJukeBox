@@ -7,7 +7,7 @@ import org.apache.commons.lang3.SystemUtils;
 
 /**
  * Firefox impl of BrowserFacade interface. Currently only supported on windows
- * @author: wnavey
+ * @author: William Navey
  */
 public class FirefoxFacade implements BrowserFacade {
 

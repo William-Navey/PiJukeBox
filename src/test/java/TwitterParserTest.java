@@ -4,7 +4,7 @@ import twitter.TwitterParser;
 import static org.junit.Assert.*;
 
 /**
- * @author: wnavey
+ * @author: William Navey
  */
 public class TwitterParserTest {
 

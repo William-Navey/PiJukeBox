@@ -3,7 +3,7 @@ package client;
 import java.io.IOException;
 
 /**
- * @author: wnavey
+ * @author: William Navey
  */
 public interface BrowserFacade {
 

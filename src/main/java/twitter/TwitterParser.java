@@ -1,7 +1,7 @@
 package twitter;
 
 /**
- * @author: wnavey
+ * @author: William Navey
  */
 public class TwitterParser {
 

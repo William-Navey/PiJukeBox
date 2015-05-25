@@ -3,7 +3,7 @@ package client;
 import java.io.FileNotFoundException;
 
 /**
- * @author: wnavey
+ * @author: William Navey
  */
 public class BrowserFacadeFactory {
 

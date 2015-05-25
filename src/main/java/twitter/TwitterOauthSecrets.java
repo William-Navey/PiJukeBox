@@ -2,7 +2,7 @@ package twitter;
 
 /**
  * Java bean for deserializing twitter oath json file in resources
- * @author: wnavey
+ * @author: William Navey
  */
 public class TwitterOauthSecrets {
 

@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * Facade class for interacting with the youtube
- * @author: wnavey
+ * @author: William Navey
  */
 public class YouTubeProxy {
 
