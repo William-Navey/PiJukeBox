@@ -26,14 +26,14 @@ public class YouTubeVideo implements Comparable<YouTubeVideo> {
     public static int calculatePriority(String videoId, String screenName){
         int priority = 0;
         if (TwitterFilterStream.usersLogged.contains(screenName)) {
-            logger.info("User has tweeted before, decreasing priority.");
+            logger.info("User has tweeted before, video priority decreased.");
             priority++;
         } else {
             TwitterFilterStream.usersLogged.add(screenName);
         }
 
         if (TwitterFilterStream.songsLogged.contains(videoId)) {
-            logger.info("Song has been tweeted before, decreasing priority.");
+            logger.info("Song has been tweeted before, video priority increased.");
             priority++;
         } else {
             TwitterFilterStream.songsLogged.add(videoId);
