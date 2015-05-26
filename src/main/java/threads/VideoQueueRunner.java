@@ -36,13 +36,14 @@ public class VideoQueueRunner extends Thread {
         while (true) {
             try{
                 YouTubeVideo currentVideo = priorityBlockingQueue.take();
-                Process videoProcess = browserFacade.launchBrowserProcess(currentVideo.getYoutubeLink());
+                Process videoProcess = browserFacade.launchBrowserProcess(currentVideo.getYoutubeUrl());
                 Thread.sleep(currentVideo.getMilisecDuration() + videoBufferMillis);
                 videoProcess.destroy();
             } catch (InterruptedException ex){
                 System.err.println("VideoQueueRunner thread was interrupted: " + ex.getMessage());
             } catch (IOException ex){
                 System.err.println("VideoQueueRunner thread encountered IOException: " + ex.getMessage());
+                throw new RuntimeException(ex);
             }
         }
     }

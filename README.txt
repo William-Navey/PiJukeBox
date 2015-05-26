@@ -31,3 +31,4 @@ I don't know yet, just use firefox
 
 *** Tips! ***
 
+- Apache's log4j2 is used for logging. Ensure that src/main/resources/log4j2.xml suites your logging preferences.

@@ -2,7 +2,6 @@ package youtube;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.GeoPoint;
 import com.google.api.services.youtube.model.Thumbnail;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
@@ -16,13 +15,15 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Facade class for interacting with the youtube
+ * Facade class for interacting with the youtube api
+ * Code reference: https://developers.google.com/youtube/v3/docs/videos/list
+ *
  * @author: William Navey
  */
 public class YouTubeProxy {
 
     // Global instance of YouTube object to make all API requests.
-    private static YouTube youtube;
+    private final YouTube youtube;
 
     public YouTubeProxy(String clientSecretsFile) throws IOException{
 
@@ -35,6 +36,36 @@ public class YouTubeProxy {
         youtube = new YouTube.Builder(GoogleAuthorizer.HTTP_TRANSPORT, GoogleAuthorizer.JSON_FACTORY, credential)
                 .setApplicationName("JukeBox-YouTube-Proxy")
                 .build();
+    }
+
+    public YouTubeVideo createYouTubeVideo(String videoId, String youtubeUrl, String twitterHandle) {
+        final String videoParts = "snippet, contentDetails";
+        try {
+            // Execute API request for video parts
+            YouTube.Videos.List videoListRequest = youtube.videos().list(videoParts).setId(videoId);
+            VideoListResponse videoListResponse = videoListRequest.execute();
+            List<Video> videoList = videoListResponse.getItems();
+
+            if (videoList == null || videoList.size() == 0) {
+                throw new YouTubeAPIException(
+                        "Request for parts \"" + videoParts + "\" of video of id \""+videoId+"\" returned a null or empty response."
+                );
+            }
+
+            Video video = videoList.get(0);
+            String videoTitle = video.getSnippet().getTitle();
+            int videoDurationMS = calculateDuratrionFromString(video.getContentDetails().getDuration());
+            return new YouTubeVideo(videoId, videoDurationMS, videoTitle, youtubeUrl, twitterHandle);
+        } catch (IOException ex){
+            throw new YouTubeAPIException(
+                    "Error requesting video parts \""+videoParts+"\" from video of id \"" + videoId + "\":" + ex.getMessage(), ex);
+        }
+    }
+
+    private int calculateDuratrionFromString(String strDuration) {
+        PeriodFormatter periodFormatter = ISOPeriodFormat.standard();
+        Period period = periodFormatter.parsePeriod(strDuration);
+        return period.toStandardSeconds().getSeconds() * 1000;
     }
 
     public int requestVideoDuration(String videoId) throws IOException{
@@ -88,8 +119,6 @@ public class YouTubeProxy {
      * title, video ID, location, and thumbnail.
      *
      * @param iteratorVideoResults Iterator of Videos to print
-     *
-     * @param query Search query (String)
      */
     private static void prettyPrint(Iterator<Video> iteratorVideoResults) {
 

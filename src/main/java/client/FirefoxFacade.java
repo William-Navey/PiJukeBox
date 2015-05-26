@@ -24,7 +24,8 @@ public class FirefoxFacade implements BrowserFacade {
             if(!firefoxExecutable.exists()){
                 throw new FileNotFoundException("Firefox executable not found using default path: " + firefoxExecutable.getAbsolutePath());
             }
-            pathToBrowser = firefoxExecutable.getAbsolutePath();
+            pathToBrowser = firefoxExecutable.getAbsolutePath().endsWith(" ") ?
+                    firefoxExecutable.getAbsolutePath() : firefoxExecutable.getAbsolutePath() + " ";
         }
         else{
             //LOG os not supported yet

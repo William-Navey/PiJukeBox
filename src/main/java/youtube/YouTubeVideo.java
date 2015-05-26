@@ -13,27 +13,29 @@ public class YouTubeVideo implements Comparable<YouTubeVideo> {
     // e.x: A YouTubeVideo of priority 0 will get chosen over a YouTubeVideo of priority 1
     private final int priority;
     private final int milisecDuration;
-    private final String youtubeLink;
+    private final String youtubeUrl;
+    private final String videoTitle;
 
     public static final Logger logger = LogManager.getLogger(YouTubeVideo.class.getClass().getName());
 
-    public YouTubeVideo(String videoId, int milisecDuration, String youtubeLink, String screenNameOfTweeter){
+    public YouTubeVideo(String videoId, int milisecDuration, String videoTitle, String youtubeUrl, String screenNameOfTweeter){
         this.priority = calculatePriority(videoId, screenNameOfTweeter);
         this.milisecDuration = milisecDuration;
-        this.youtubeLink = youtubeLink;
+        this.youtubeUrl = youtubeUrl;
+        this.videoTitle = videoTitle;
     }
 
-    public static int calculatePriority(String videoId, String screenName){
+    private int calculatePriority(String videoId, String screenName){
         int priority = 0;
         if (TwitterFilterStream.usersLogged.contains(screenName)) {
-            logger.info("User has tweeted before, video priority decreased.");
-            priority++;
+            logger.debug("User has tweeted before, video priority decreased.");
+            priority+=2;
         } else {
             TwitterFilterStream.usersLogged.add(screenName);
         }
 
         if (TwitterFilterStream.songsLogged.contains(videoId)) {
-            logger.info("Song has been tweeted before, video priority increased.");
+            logger.debug("Song has been tweeted before, video priority increased.");
             priority++;
         } else {
             TwitterFilterStream.songsLogged.add(videoId);
@@ -60,7 +62,11 @@ public class YouTubeVideo implements Comparable<YouTubeVideo> {
         return milisecDuration;
     }
 
-    public String getYoutubeLink() {
-        return youtubeLink;
+    public String getYoutubeUrl() {
+        return youtubeUrl;
+    }
+
+    public String getVideoTitle() {
+        return videoTitle;
     }
 }

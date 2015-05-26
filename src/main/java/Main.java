@@ -4,6 +4,7 @@
 
 import java.io.IOException;
 
+import config.JukeboxConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
@@ -20,12 +21,13 @@ public class Main {
     public static void main( String[] args ) throws Exception {
 
         try {
-            String twitterScreenName = "@RaspberryBBox";
+            JukeboxConfig jukeboxConfig = new JsonReader<JukeboxConfig>().
+                    deserializeJsonFile("/jukebox_config.json", JukeboxConfig.class);
+            String twitterScreenName = jukeboxConfig.getTwitter_handle();
             YouTubeProxy youTubeProxy = new YouTubeProxy("/google_client_secrets.json");
             TwitterFilterStream twitterFilterStream =
-                    new TwitterFilterStream(youTubeProxy, "/twitter_oath_credentials.json", logger);
+                    new TwitterFilterStream(jukeboxConfig, youTubeProxy, "/twitter_oath_credentials.json", logger);
 
-            logger.info("Listening for tweets at " + twitterScreenName);
             twitterFilterStream.run(twitterScreenName);
 
         }
