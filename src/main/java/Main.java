@@ -8,8 +8,8 @@ import config.JukeboxConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import twitter.TwitterFilterStream;
-import youtube.YouTubeProxy;
+import twitter.TwitterClientProxy;
+import youtube.YouTubeClientProxy;
 
 // PRE-REQS for running this software are in the README.txt. Read it!
 
@@ -24,11 +24,11 @@ public class Main {
             JukeboxConfig jukeboxConfig = new JsonReader<JukeboxConfig>().
                     deserializeJsonFile("/jukebox_config.json", JukeboxConfig.class);
             String twitterScreenName = jukeboxConfig.getTwitter_handle();
-            YouTubeProxy youTubeProxy = new YouTubeProxy("/google_client_secrets.json");
-            TwitterFilterStream twitterFilterStream =
-                    new TwitterFilterStream(jukeboxConfig, youTubeProxy, "/twitter_oath_credentials.json", logger);
+            YouTubeClientProxy youTubeClientProxy = new YouTubeClientProxy("/google_client_secrets.json");
+            TwitterClientProxy twitterClientProxy =
+                    new TwitterClientProxy(jukeboxConfig, youTubeClientProxy, "/twitter_oath_credentials.json", logger);
 
-            twitterFilterStream.run(twitterScreenName);
+            twitterClientProxy.launchTweetVideoQueue(twitterScreenName);
 
         }
         catch (GoogleJsonResponseException e) {

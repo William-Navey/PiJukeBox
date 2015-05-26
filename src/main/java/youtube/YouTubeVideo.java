@@ -2,9 +2,11 @@ package youtube;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import twitter.TwitterFilterStream;
+import twitter.TwitterClientProxy;
 
 /**
+ * YouTubeVideo class to encapsulate all the important data of a YouTubeVideo. This class makes no API calls.
+ *  All the field values must be provided during object construction. Implements Comparable<> for priority queueing
  * @author: William Navey
  */
 public class YouTubeVideo implements Comparable<YouTubeVideo> {
@@ -27,22 +29,23 @@ public class YouTubeVideo implements Comparable<YouTubeVideo> {
 
     private int calculatePriority(String videoId, String screenName){
         int priority = 0;
-        if (TwitterFilterStream.usersLogged.contains(screenName)) {
+        if (TwitterClientProxy.usersLogged.contains(screenName)) {
             logger.debug("User has tweeted before, video priority decreased.");
             priority+=2;
         } else {
-            TwitterFilterStream.usersLogged.add(screenName);
+            TwitterClientProxy.usersLogged.add(screenName);
         }
 
-        if (TwitterFilterStream.songsLogged.contains(videoId)) {
+        if (TwitterClientProxy.songsLogged.contains(videoId)) {
             logger.debug("Song has been tweeted before, video priority increased.");
             priority++;
         } else {
-            TwitterFilterStream.songsLogged.add(videoId);
+            TwitterClientProxy.songsLogged.add(videoId);
         }
         return priority;
     }
 
+    @Override
     public int compareTo(YouTubeVideo o){
         // if THIS object is "less than" the specified object (o), return a negative integer
         if (this.priority < o.getPriority()) {

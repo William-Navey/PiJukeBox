@@ -38,3 +38,12 @@ Gotta be Windoze for now, sorry.
 *** Tips! ***
 
 - Apache's log4j2 is used for logging. Ensure that src/main/resources/log4j2.xml suites your logging preferences.
+
+
+&&& Will's TODO List &&& 
+
+- Create maven profile to compile jar, add main class in manifest.
+- Unit tests
+- Handle multiple youtube links in single tweet
+- Impl config dependency injection of useUserPriority & useSongPriority
+- Change TwitterClientProxy to be a singleton, & change the hashsets to be non static

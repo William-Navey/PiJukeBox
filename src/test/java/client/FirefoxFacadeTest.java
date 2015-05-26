@@ -1,3 +1,5 @@
+package client;
+
 import client.BrowserFacade;
 import client.FirefoxFacade;
 import org.junit.Test;
