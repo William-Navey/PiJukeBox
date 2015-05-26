@@ -24,9 +24,15 @@ For FIREFOX:
 
 For CHROME:
 
-I don't know yet, just use firefox
+I don't know yet, just use firefox :)
 -----------------------------------
 
+
+
+OS REQS:
+-----------------------------------
+Gotta be Windoze for now, sorry.
+-----------------------------------
 
 
 *** Tips! ***
