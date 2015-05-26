@@ -24,6 +24,7 @@ public class FirefoxFacade implements BrowserFacade {
             if(!firefoxExecutable.exists()){
                 throw new FileNotFoundException("Firefox executable not found using default path: " + firefoxExecutable.getAbsolutePath());
             }
+            // There needs to be a space in between the browser path & the url when using java's runtime exec to launch the browser
             pathToBrowser = firefoxExecutable.getAbsolutePath().endsWith(" ") ?
                     firefoxExecutable.getAbsolutePath() : firefoxExecutable.getAbsolutePath() + " ";
         }
