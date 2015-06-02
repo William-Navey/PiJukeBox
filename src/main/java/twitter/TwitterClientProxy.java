@@ -135,6 +135,7 @@ public class TwitterClientProxy {
                                 youtubeTweetYouTube.getYoutubeUrl(),
                                 priorityScore
                         );
+                        tweetHistorian.logTweetYouTube(youtubeTweetYouTube);
                         videoPriorityBlockingQueue.add(tweetedYouTubeVideo);
                         logger.info("Added video \"" + tweetedYouTubeVideo.getVideoTitle() + "\" to priorityQueue");
                     }
