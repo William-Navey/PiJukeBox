@@ -45,5 +45,5 @@ Gotta be Windoze for now, sorry.
 - Create maven profile to compile jar, add main class in manifest.
 - Unit tests
 - Handle multiple youtube links in single tweet
-- Impl config dependency injection of useUserPriority & useSongPriority
-- Change TwitterClientProxy to be a singleton, & change the hashsets to be non static
+- Change TwitterClientProxy to be a singleton
+- add volatile boolean to be used to continue listening loop rather than hardcoded true value

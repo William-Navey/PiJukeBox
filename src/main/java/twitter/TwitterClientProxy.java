@@ -48,9 +48,6 @@ import java.util.concurrent.PriorityBlockingQueue;
  */
 public class TwitterClientProxy {
 
-    public static Set<String> usersLogged = Collections.synchronizedSet(new HashSet<String>());
-    public static Set<String> songsLogged = Collections.synchronizedSet(new HashSet<String>());
-
     private final JukeboxConfig jukeboxConfig;
     private final YouTubeClientProxy youTubeClientProxy;
     private final Authentication auth;
@@ -84,15 +81,16 @@ public class TwitterClientProxy {
     /**
      * Opens a connection stream that listens for tweets received by the specified screen name.
      *  If a tweet received is a youtube video, that video is added to the video queue
-     * @param twitterScreenName
      * @throws InterruptedException
      * @throws IOException
      */
-    public void launchTweetVideoQueue(String twitterScreenName) throws InterruptedException, IOException {
+    public void launchTweetVideoQueue() throws InterruptedException, IOException {
         BlockingQueue<String> tweetStreamBlockingQueue = new LinkedBlockingQueue<String>(10000);
         StatusesFilterEndpoint endpoint = new StatusesFilterEndpoint();
+
+        final String activeTwitterScreenName = jukeboxConfig.getTwitter_handle();
         // add some track terms
-        endpoint.trackTerms(Lists.newArrayList(twitterScreenName));
+        endpoint.trackTerms(Lists.newArrayList(activeTwitterScreenName));
 
         // Create a new BasicClient. By default gzip is enabled.
         Client client = new ClientBuilder()
@@ -107,13 +105,14 @@ public class TwitterClientProxy {
         client.connect();
 
         BrowserFacade browserFacade = BrowserFacadeFactory.getBrowserFacade(jukeboxConfig.getBrowser_path());
+        TweetHistorian tweetHistorian = new TweetHistorian(jukeboxConfig.isPrioritize_users(), jukeboxConfig.isPrioritize_songs());
         // Init VideoQueueRunner, launch in separate thread
         PriorityBlockingQueue<YouTubeVideo> videoPriorityBlockingQueue = new PriorityBlockingQueue<YouTubeVideo>();
         new VideoQueueRunner(videoPriorityBlockingQueue, browserFacade).start();
 
         int exitStatus = 0;
 
-        logger.info("Connected! Listening for tweets at " + twitterScreenName);
+        logger.info("Connected! Listening for tweets at " + activeTwitterScreenName);
         try {
             while (true) {
                 try {
@@ -127,11 +126,12 @@ public class TwitterClientProxy {
                                 "\ntweet json: " + tweetJson);
 
                         TweetYouTube youtubeTweetYouTube = TwitterParser.parseYouTubeTweet(tweetJson);
+                        int priorityScore = tweetHistorian.calculateTweetYouTubePriorityScore(youtubeTweetYouTube);
 
                         YouTubeVideo tweetedYouTubeVideo = youTubeClientProxy.createYouTubeVideo(
                                 youtubeTweetYouTube.getVideoId(),
                                 youtubeTweetYouTube.getYoutubeUrl(),
-                                youtubeTweetYouTube.getTweetUserHandle()
+                                priorityScore
                         );
                         videoPriorityBlockingQueue.add(tweetedYouTubeVideo);
                         logger.info("Added video \"" + tweetedYouTubeVideo.getVideoTitle() + "\" to priorityQueue");

@@ -9,10 +9,12 @@ import com.google.common.collect.Lists;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodFormatter;
+import twitter.TweetYouTube;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Facade class for interacting with the youtube api
@@ -44,9 +46,10 @@ public class YouTubeClientProxy {
      * @param videoId Id of a YouTube video. Required to make API request.
      * @param youtubeUrl Url of video, used for prioritization.
      * @param twitterHandle Handle of user who tweeted the url, used for prioritization.
+     * @param tweetsReceived YouTube tweets received
      * @return
      */
-    public YouTubeVideo createYouTubeVideo(String videoId, String youtubeUrl, String twitterHandle) {
+    public YouTubeVideo createYouTubeVideo(String videoId, String youtubeUrl, int videoPriorityScore) {
         final String videoParts = "snippet, contentDetails";
         try {
             // Execute API request for video parts
@@ -63,7 +66,7 @@ public class YouTubeClientProxy {
             Video video = videoList.get(0);
             String videoTitle = video.getSnippet().getTitle();
             int videoDurationMS = calculateDuratrionFromString(video.getContentDetails().getDuration());
-            return new YouTubeVideo(videoId, videoDurationMS, videoTitle, youtubeUrl, twitterHandle);
+            return new YouTubeVideo(videoDurationMS, videoTitle, youtubeUrl, videoPriorityScore);
         } catch (IOException ex){
             throw new YouTubeAPIException(
                     "Error requesting video parts \""+videoParts+"\" from video of id \"" + videoId + "\":" + ex.getMessage(), ex);

@@ -23,12 +23,11 @@ public class Main {
         try {
             JukeboxConfig jukeboxConfig = new JsonReader<JukeboxConfig>().
                     deserializeJsonFile("/jukebox_config.json", JukeboxConfig.class);
-            String twitterScreenName = jukeboxConfig.getTwitter_handle();
             YouTubeClientProxy youTubeClientProxy = new YouTubeClientProxy("/google_client_secrets.json");
             TwitterClientProxy twitterClientProxy =
                     new TwitterClientProxy(jukeboxConfig, youTubeClientProxy, "/twitter_oath_credentials.json", logger);
 
-            twitterClientProxy.launchTweetVideoQueue(twitterScreenName);
+            twitterClientProxy.launchTweetVideoQueue();
 
         }
         catch (GoogleJsonResponseException e) {

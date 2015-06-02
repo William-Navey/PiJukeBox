@@ -2,7 +2,10 @@ package youtube;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import twitter.TweetYouTube;
 import twitter.TwitterClientProxy;
+
+import java.util.Set;
 
 /**
  * YouTubeVideo class to encapsulate all the important data of a YouTubeVideo. This class makes no API calls.
@@ -20,29 +23,11 @@ public class YouTubeVideo implements Comparable<YouTubeVideo> {
 
     public static final Logger logger = LogManager.getLogger(YouTubeVideo.class.getClass().getName());
 
-    public YouTubeVideo(String videoId, int milisecDuration, String videoTitle, String youtubeUrl, String screenNameOfTweeter){
-        this.priority = calculatePriority(videoId, screenNameOfTweeter);
+    public YouTubeVideo(int milisecDuration, String videoTitle, String youtubeUrl, int priorityScore){
+        this.priority = priorityScore;
         this.milisecDuration = milisecDuration;
         this.youtubeUrl = youtubeUrl;
         this.videoTitle = videoTitle;
-    }
-
-    private int calculatePriority(String videoId, String screenName){
-        int priority = 0;
-        if (TwitterClientProxy.usersLogged.contains(screenName)) {
-            logger.debug("User has tweeted before, video priority decreased.");
-            priority+=2;
-        } else {
-            TwitterClientProxy.usersLogged.add(screenName);
-        }
-
-        if (TwitterClientProxy.songsLogged.contains(videoId)) {
-            logger.debug("Song has been tweeted before, video priority increased.");
-            priority++;
-        } else {
-            TwitterClientProxy.songsLogged.add(videoId);
-        }
-        return priority;
     }
 
     @Override
