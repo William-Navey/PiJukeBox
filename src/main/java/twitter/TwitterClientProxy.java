@@ -52,8 +52,10 @@ public class TwitterClientProxy {
     private final YouTubeClientProxy youTubeClientProxy;
     private final Authentication auth;
     private final Logger logger;
+    private volatile boolean listenForTweets;
 
     public TwitterClientProxy(JukeboxConfig jukeboxConfig, YouTubeClientProxy youTubeClientProxy, String twitterOauthFile, Logger logger) throws IOException{
+        this.listenForTweets = true;
         this.jukeboxConfig = jukeboxConfig;
         this.youTubeClientProxy = youTubeClientProxy;
         this.logger = logger;
@@ -111,10 +113,10 @@ public class TwitterClientProxy {
         new VideoQueueRunner(videoPriorityBlockingQueue, browserFacade).start();
 
         int exitStatus = 0;
-
+        this.listenForTweets = true;
         logger.info("Connected! Listening for tweets at " + activeTwitterScreenName);
         try {
-            while (true) {
+            while (this.listenForTweets) {
                 try {
                     //  Retrieves and removes the head of this queue, waiting if necessary
                     //   until an element becomes available.
@@ -159,5 +161,13 @@ public class TwitterClientProxy {
             client.stop();
             System.exit(exitStatus);
         }
+    }
+
+    public boolean isListeningForTweets() {
+        return listenForTweets;
+    }
+
+    public void setListenForTweets(boolean listenForTweets) {
+        this.listenForTweets = listenForTweets;
     }
 }

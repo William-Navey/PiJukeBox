@@ -46,4 +46,3 @@ Gotta be Windoze for now, sorry.
 - Unit tests
 - Handle multiple youtube links in single tweet
 - Change TwitterClientProxy to be a singleton
-- add volatile boolean to be used to continue listening loop rather than hardcoded true value
